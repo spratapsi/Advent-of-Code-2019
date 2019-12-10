@@ -1,29 +1,20 @@
 from collections import defaultdict
 from itertools import combinations, zip_longest
-from math import atan2, dist, tau, pi
-from typing import NamedTuple
-
-class Point(NamedTuple):
-    x: int
-    y: int
-
-    def __sub__(self, other):
-        return Point(self.x - other.x, self.y - other.y)
-
-def angle(P, Q):
-    """Compute angle of line PQ, in (-pi/4, 3pi/4]"""
-    D = Q - P
-    theta = atan2(D.y, D.x)
-    angle = tau + theta if theta < -tau / 4 else theta
-    return round(angle, 10)
+from math import tau, pi
+from cmath import phase
 
 with open('day10.in', 'r') as file:
     asteroid_map = [line.strip() for line in file]
 
+def angle(z):
+    theta = phase(z)
+    angle = theta if theta >= -pi / 2 else theta + tau
+    return round(phase(z), 10)
+
 # Part 1
 
 asteroids = [
-    Point(x, y)
+    (x + 1j * y)
     for y, line in enumerate(asteroid_map)
     for x, character in enumerate(line)
     if character == '#'
@@ -31,7 +22,8 @@ asteroids = [
 
 asteroid_lines = {P: defaultdict(list) for P in asteroids}
 for P, Q in combinations(asteroids, 2):
-    theta = angle(P, Q)
+    z = Q - P
+    theta = angle(z)
     theta_ = theta + (pi if theta <= pi / 2 else -pi)
     asteroid_lines[P][theta].append(Q)
     asteroid_lines[Q][theta_].append(P)
@@ -46,7 +38,7 @@ P = best_location
 lines = asteroid_lines[P]
 
 for line in lines.values():
-    line.sort(key=lambda Q: dist(P, Q))
+    line.sort(key=abs)
 
 sorted_lines = (lines[angle] for angle in sorted(lines))
 destroyed_asteroids = [
@@ -58,4 +50,4 @@ destroyed_asteroids = [
 destroyed = destroyed_asteroids[199]
 
 print('Part 1:', best_location, nasteroids)
-print('Part 2:', destroyed.x * 100 + destroyed.y)
+print('Part 2:', destroyed.real * 100 + destroyed.imag)
