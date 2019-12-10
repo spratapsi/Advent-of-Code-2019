@@ -1,4 +1,3 @@
-from itertools import permutations
 from day9_intcode import IntCode
 
 with open('day9.in', 'r') as file:
