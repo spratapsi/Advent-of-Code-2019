@@ -1,14 +1,13 @@
 from collections import defaultdict
 from itertools import combinations, zip_longest
-from math import tau, pi
-from cmath import phase
+from cmath import pi, phase
 
 with open('day10.in', 'r') as file:
     asteroid_map = [line.strip() for line in file]
 
 def angle(z):
     theta = phase(z)
-    theta += tau if theta < -pi / 2 else 0
+    theta += 2 * pi if theta < -pi / 2 else 0
     return round(theta, 10)
 
 # Part 1
@@ -27,14 +26,13 @@ for P, Q in combinations(asteroids, 2):
     asteroid_lines[P][theta].append(Q)
     asteroid_lines[Q][theta_].append(P)
 
-best_location = max(asteroid_lines, key=lambda P: len(asteroid_lines[P]))
-nasteroids = len(asteroid_lines[best_location])
+station_location = max(asteroid_lines, key=lambda P: len(asteroid_lines[P]))
+nasteroids = len(asteroid_lines[P])
 
 
 # Part 2
 
-P = best_location
-lines = asteroid_lines[P]
+lines = asteroid_lines[station_location]
 
 for line in lines.values():
     line.sort(key=abs)
