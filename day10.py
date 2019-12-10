@@ -1,6 +1,6 @@
 from collections import defaultdict
-from itertools import zip_longest
-from math import atan2, dist, tau
+from itertools import combinations, zip_longest
+from math import atan2, dist, tau, pi
 from typing import NamedTuple
 
 class Point(NamedTuple):
@@ -11,6 +11,7 @@ class Point(NamedTuple):
         return Point(self.x - other.x, self.y - other.y)
 
 def angle(P, Q):
+    """Compute angle of line PQ, in (-pi/4, 3pi/4]"""
     D = Q - P
     theta = atan2(D.y, D.x)
     angle = tau + theta if theta < -tau / 4 else theta
@@ -28,26 +29,26 @@ asteroids = [
     if character == '#'
 ]
 
-directions = {
-    P: {angle(P, Q) for Q in asteroids if Q is not P}
-    for P in asteroids
-}
+asteroid_lines = {P: defaultdict(list) for P in asteroids}
+for P, Q in combinations(asteroids, 2):
+    theta = angle(P, Q)
+    theta_ = theta + (pi if theta <= pi / 2 else -pi)
+    asteroid_lines[P][theta].append(Q)
+    asteroid_lines[Q][theta_].append(P)
 
-best_location = max(asteroids, key=lambda P: len(directions[P]))
-nasteroids = len(directions[best_location])
+best_location = max(asteroid_lines, key=lambda P: len(asteroid_lines[P]))
+nasteroids = len(asteroid_lines[best_location])
+
 
 # Part 2
 
 P = best_location
-other_asteroids = (Q for Q in asteroids if Q is not P)
-asteroid_lines = defaultdict(list)
-for Q in other_asteroids:
-    asteroid_lines[angle(P, Q)].append(Q)
+lines = asteroid_lines[P]
 
-for dir, asts in asteroid_lines.items():
-    asts.sort(key=lambda Q: dist(P, Q))
+for line in lines.values():
+    line.sort(key=lambda Q: dist(P, Q))
 
-sorted_lines = (asteroid_lines[angle] for angle in sorted(asteroid_lines))
+sorted_lines = (lines[angle] for angle in sorted(lines))
 destroyed_asteroids = [
     asteroid
     for line in zip_longest(*sorted_lines)
