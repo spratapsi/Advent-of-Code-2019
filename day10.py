@@ -8,8 +8,8 @@ with open('day10.in', 'r') as file:
 
 def angle(z):
     theta = phase(z)
-    angle = theta if theta >= -pi / 2 else theta + tau
-    return round(phase(z), 10)
+    theta += tau if theta < -pi / 2 else 0
+    return round(theta, 10)
 
 # Part 1
 
@@ -23,8 +23,7 @@ asteroids = [
 asteroid_lines = {P: defaultdict(list) for P in asteroids}
 for P, Q in combinations(asteroids, 2):
     z = Q - P
-    theta = angle(z)
-    theta_ = theta + (pi if theta <= pi / 2 else -pi)
+    theta, theta_ = angle(z), angle(-z)
     asteroid_lines[P][theta].append(Q)
     asteroid_lines[Q][theta_].append(P)
 
