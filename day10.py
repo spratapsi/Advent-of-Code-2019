@@ -8,7 +8,7 @@ with open('day10.in', 'r') as file:
 def angle(z):
     theta = phase(z)
     theta += 2 * pi if theta < -pi / 2 else 0
-    return round(theta, 10)
+    return round(theta, 13)
 
 # Part 1
 
@@ -27,7 +27,7 @@ for P, Q in combinations(asteroids, 2):
     asteroid_lines[Q][theta_].append(P)
 
 station_location = max(asteroid_lines, key=lambda P: len(asteroid_lines[P]))
-nasteroids = len(asteroid_lines[P])
+nasteroids = len(asteroid_lines[station_location])
 
 
 # Part 2
@@ -46,5 +46,5 @@ destroyed_asteroids = [
 ]
 destroyed = destroyed_asteroids[199]
 
-print('Part 1:', best_location, nasteroids)
+print('Part 1:', station_location, nasteroids)
 print('Part 2:', destroyed.real * 100 + destroyed.imag)
