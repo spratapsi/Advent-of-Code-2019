@@ -15,10 +15,10 @@ class IntCode(defaultdict):
         self.relative_base = 0
         self.outputs = []
         self.finished = False
-        self._process = self._main_process()
 
     def start(self):
         """self._process is a subroutine that needs to be started."""
+        self._process = self._main_process()
         next(self._process)
 
     def input(self, *values):
@@ -37,17 +37,18 @@ class IntCode(defaultdict):
         self.ptr += 1
         return pointer
 
+    @staticmethod
     def _split(instruction):
         """Split instruction code into operation and modes."""
         modes_reversed, opcode = divmod(instruction, 100)
         operation, nparams = IntCode.operations[opcode]
-        modes = str(modes_reversed).zfill(nparams)[::-1]
+        modes = f'{modes_reversed:0{nparams}}'[::-1]
         return operation, modes
 
     def _main_process(self):
         """Main coroutine. Deals with input and output."""
         while (instruction := self[self._next_ptr()]) != 99:
-            operation, modes = self._split(instruction)
+            operation, modes = IntCode._split(instruction)
             param_pointers = (self._next_ptr(mode) for mode in modes)
 
             if operation is IntCode.inp:
