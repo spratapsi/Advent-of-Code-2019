@@ -1,4 +1,4 @@
-from collections import defaultdict, namedtuple
+from collections import defaultdict, namedtuple, deque
 
 Operation = namedtuple('Operation', ['function', 'nparams'])
 
@@ -13,7 +13,7 @@ class IntCode(defaultdict):
 
         self.ptr = 0
         self.relative_base = 0
-        self.outputs = []
+        self.output = deque()
         self.finished = False
 
     def start(self):
@@ -24,6 +24,9 @@ class IntCode(defaultdict):
     def input(self, *values):
         for value in values:
             self._process.send(value)
+
+    def read(self):
+        return self.output.popleft()
 
     def _next_ptr(self, mode='1'):
         """Get next pointer and increment"""
@@ -56,7 +59,7 @@ class IntCode(defaultdict):
                 operation(self, inp, *param_pointers)
             elif operation is IntCode.out:
                 output = operation(self, *param_pointers)
-                self.outputs.append(output)
+                self.output.append(output)
             else:
                 operation(self, *param_pointers)
 

@@ -23,10 +23,6 @@ class Moon:
 
 
 class MoonSystem(list):
-    """A System is a list of moons"""
-
-    # Part 1
-
     def apply_gravity(self, dim):
         for A, B in combinations(self, 2):
             a, b = A.position[dim], B.position[dim]

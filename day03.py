@@ -1,6 +1,6 @@
 from itertools import accumulate
 
-with open('day3.in') as file:
+with open('day03.in') as file:
     wire_segments = [line.split(',') for line in file]
 
 dirs = {'R': 1, 'U': 1j, 'L': -1, 'D': -1j}

@@ -1,7 +1,7 @@
 from itertools import accumulate
 from typing import NamedTuple
 
-with open('day3.in') as file:
+with open('day03.in') as file:
     wire_segments = {wire: line.split(',') for wire, line in enumerate(file)}
 
 class Point(NamedTuple):
